@@ -1,0 +1,31 @@
+
+.btn-primary {
+	width: 95px;
+	padding: 8px 4px;
+	font-size: 11px;
+	font-family: Verdana, Geneva, sans-serif;
+	text-align: center;
+}
+
+#panel2{
+	display:none;
+		font-family: Verdana, Geneva, sans-serif;
+}
+#panel3{
+	display:none;
+	font-family: Verdana, Geneva, sans-serif;
+}
+
+.progress {
+    background-color: #d9d9d9;
+}
+.progress-bar-info {
+    background-color: #286090;
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 11px;
+
+}
+.label {
+
+	font-family: Verdana, Geneva, sans-serif;
+}
