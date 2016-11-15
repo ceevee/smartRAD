@@ -39,11 +39,10 @@
 
 </header>
 
-<!-- The content of your page would go here. -->
         <div class="row" style="padding-left: 100px;padding-right: 100px;">
 		<br>
 		<ul class="nav nav-pills" role="tablist">
-			  <li role="presentation" class="active"><a href="#">Home <span class="badge">42</span></a></li>
+			  <li role="presentation" class="active"><a href="index.php">Home <span class="badge">42</span></a></li>
 			  <li role="presentation"><a href="#">Profile</a></li>
 			  <li role="presentation"><a href="#">Jobs <span class="badge">3</span></a></li>
 			  <li role="presentation"><a href="#">Messages <span class="badge">12</span></a></li>
@@ -52,17 +51,49 @@
 			
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Not a member yet?</h3>
+                    <h3 class="panel-title">Please Select an Option</h3>
                 </div>
                 <div class="panel-body">
+                     <div class="row">
+                        <div class="col-lg-2">
+                        </div>
+                        <div class="col-lg-7">
+                            <h4><font color="7A7974"> Publish an Advertisement </form></h4> 
+                        </div>
+                        <div class="col-lg-3">  
+                            <button  type="button" onclick="window.location = 'form.php'" class="btn btn-default" >Enter</button>
+                        </div>
+					</div><br>
                     <div class="row">
                         <div class="col-lg-2">
                         </div>
                         <div class="col-lg-7">
-                            <h4><font color="7A7974"> Sign up for free. </form></h4> 
+                            <h4><font color="7A7974"> Edit Advertisements </form></h4> 
                         </div>
                         <div class="col-lg-3">  
-                            <button  type="button" onclick="window.location = 'form.html'" class="btn btn-primary" >Sign Up</button>
+                            <button  type="button" onclick="window.location = 'alljobs.php'" class="btn btn-default" >Enter</button>
+                        </div>
+                    </div>
+					<br>
+                    <div class="row">
+                        <div class="col-lg-2">
+                        </div>
+                        <div class="col-lg-7">
+                            <h4><font color="7A7974"> Apply Jobs</form></h4> 
+                        </div>
+                        <div class="col-lg-3">  
+                            <button  type="button" onclick="window.location = 'applyjob.php'" class="btn btn-default" >Enter</button>
+                        </div>
+                    </div>
+					<br>
+					<div class="row">
+                        <div class="col-lg-2">
+                        </div>
+                        <div class="col-lg-7">
+                            <h4><font color="7A7974"> Search Jobs</form></h4> 
+                        </div>
+                        <div class="col-lg-3">  
+                            <button  type="button" onclick="window.location = 'search.php'" class="btn btn-default" >Enter</button>
                         </div>
                     </div>
                 </div>

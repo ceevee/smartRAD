@@ -1,3 +1,77 @@
+<?php
+
+	error_reporting( ~E_NOTICE ); // avoid notice
+	
+	require_once 'dbconfig.php';
+	
+	if(isset($_POST['btnsave']))
+	{
+
+		$companyName = $_POST['companyName'];
+		$vacProfession = $_POST['vacProfession'];
+		
+		$imgFile = $_FILES['vacPic']['name'];
+		$tmp_dir = $_FILES['vacPic']['tmp_name'];
+		$imgSize = $_FILES['vacPic']['size'];
+		
+		
+		if(empty($companyName)){
+			$errMSG = "Please Enter Company Name.";
+		}
+		else if(empty($vacProfession)){
+			$errMSG = "Please Enter Job Title.";
+		}
+		else if(empty($imgFile)){
+			$errMSG = "Please Select an Advertisement.";
+		}
+		else
+		{
+			$upload_dir = 'vac_images/'; // upload directory
+	
+			$imgExt = strtolower(pathinfo($imgFile,PATHINFO_EXTENSION)); // get image extension
+		
+			// valid image extensions
+			$valid_extensions = array('jpeg', 'jpg', 'png', 'gif'); // valid extensions
+		
+			// rename uploading image
+			$vacPic = rand(1000,1000000).".".$imgExt;
+				
+			// allow valid image file formats
+			if(in_array($imgExt, $valid_extensions)){			
+				// Check file size '5MB'
+				if($imgSize < 5000000)				{
+					move_uploaded_file($tmp_dir,$upload_dir.$vacPic);
+				}
+				else{
+					$errMSG = "Sorry, your file is too large.";
+				}
+			}
+			else{
+				$errMSG = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";		
+			}
+		}
+		
+		
+		// if no error occured, continue ....
+		if(!isset($errMSG))
+		{
+			$stmt = $DB_con->prepare('INSERT INTO vacancies(companyName,vacProfession,vacPic) VALUES(:cname, :cjob, :cpic)');
+			$stmt->bindParam(':cname',$companyName);
+			$stmt->bindParam(':cjob',$vacProfession);
+			$stmt->bindParam(':cpic',$vacPic);
+			
+			if($stmt->execute())
+			{
+				$successMSG = "Your  advertisement published successfully!";
+				header("refresh:5;alljobs.php"); // redirects image view page after 5 seconds.
+			}
+			else
+			{
+				$errMSG = "Error while publishing!";
+			}
+		}
+	}
+?>
 <!DOCTYPE html>
 <html>
 
@@ -27,10 +101,10 @@
 
 	<div class="header-limiter">
 
-		<h1><a href="#">Rapid<span>JOBBS</span></a></h1>
+		<h1><a href="index.php">Rapid<span>JOBBS</span></a></h1>
 
 		<nav>
-			<a href="#">Home</a>
+			<a href="index.php">Home</a>
 			<a href="#" class="selected">Login</a>
 			<a href="#">Jobbs</a>
 			<a href="#">About</a>
@@ -41,11 +115,11 @@
 
 </header>
 
-<!-- The content of your page would go here. -->
+
         <div class="row" style="padding-left: 100px;padding-right: 100px;">
 		<br>
 		<ul class="nav nav-pills" role="tablist">
-			  <li role="presentation" class="active"><a href="#">Home <span class="badge">42</span></a></li>
+			  <li role="presentation" class="active"><a href="index.php">Home <span class="badge">42</span></a></li>
 			  <li role="presentation"><a href="#">Profile</a></li>
 			  <li role="presentation"><a href="#">Jobs <span class="badge">3</span></a></li>
 			  <li role="presentation"><a href="#">Messages <span class="badge">12</span></a></li>
@@ -54,153 +128,60 @@
 			
            <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Curriculum Vitae</h3>
+                    <h3 class="panel-title">Publish Module</h3>
                 </div>
                 <div class="panel-body">
-                    <form name="LoanApplication" id="LoanApplication" action="response_eb.php" method="post">
-                        <div id="panel1">
-                            <br>
-                            <div class="row">
-                                <div class="col-lg-3">
-                                    <label>Name with initials :</label>
-                                </div>
-                                <div class="col-lg-9">
-                                    <input type="text" placeholder="Enter name" id="customerName" name="customerName" value="" class="form-control" maxlength="30" required="required" data-index="2">
-                                    <span class="has-error">
-                                        <small data-fv-result="INVALID" id="namevalid" data-fv-for="message" data-fv-validator="notEmpty" class="help-block" style="display:none">Invalid name</small>
-                                    </span>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-lg-3">
-                                    <label>Address :</label>
-                                </div>
-                                <div class="col-lg-9">
-                                    <input type="text" placeholder="Enter address" id="customerAddress" name="customerAddress" value="" class="form-control" maxlength="100" required="required" data-index="3">
-                                    <span class="has-error">
-                                        <small data-fv-result="INVALID" id="addressvalid" data-fv-for="message" data-fv-validator="notEmpty" class="help-block" style="display:none">Invalid address</small>
-                                    </span>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-lg-3">
-                                    <label>NIC:</label>
-                                </div>
-                                <div class="col-lg-3">
-                                    <input type="text" placeholder="Enter NIC" id="nicNo" name="nicNo" value="" class="form-control" maxlength="12" required="required" data-index="4">
-                                    <span class="has-error">
-                                        <small data-fv-result="INVALID" id="nicvalid" data-fv-for="message" data-fv-validator="notEmpty" class="help-block" style="display:none">Invalid National Identity Card Number</small>
-                                    </span>
-                                </div>
-                                <div class="col-lg-2">
-                                    <label>Date of Birth:</label>
-                                </div>
-                                <div class="col-lg-4">
-                                    <input type="text" placeholder="Click to select" name="dob" id="datepicker" value="" class="form-control" maxlength="10" required="required" data-index="5">
-                                    <span class="has-error">
-                                        <small data-fv-result="INVALID" id="dobvalid" data-fv-for="message" data-fv-validator="notEmpty" class="help-block" style="display:none">Invalid date of birth</small>
-                                    </span>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-lg-3">
-                                    <label>Mobile No:</label>
-                                </div>
-                                <div class="col-lg-3">
-                                    <input type="text" placeholder="Ex:0731234567" id="contactNo" name="contactNo" value="" class="form-control" maxlength="10" required="required" data-index="6">
-                                    <span class="has-error">
-                                        <small data-fv-result="INVALID" id="phonevalid" data-fv-for="message" data-fv-validator="notEmpty" class="help-block" style="display:none">Invalid mobile no</small>
-                                    </span>
-                                </div>
-                                <div class="col-lg-2">
-                                    <label>Email:</label>
-                                </div>
-                                <div class="col-lg-4">
-                                    <input type="email" placeholder="Ex:abc@abc.lk" id="emailAddress" name="emailAddress" value="" class="form-control" maxlength="30" required="required" data-index="7">
-                                    <span class="has-error" >
-                                        <small data-fv-result="INVALID" id="emailnvalid" data-fv-for="message" data-fv-validator="notEmpty" class="help-block" style="display: none;">Invalid email</small>
-                                    </span>
-                                </div>
-                            </div>
-                            <br/>
-                            <div class="row">
-                                <div class="col-lg-8">
-                                </div>
-                                <div class="col-lg-2">
-                                    <button class="btn btn-primary btn-right" id="panel1_back">Back</button>
-                                </div>
-                                <div class="col-lg-2">
-                                    <button class="btn btn-primary btn-right" id="panel1_next" data-index="8">Next</button>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100" style="width:25%">
-                                    25% Complete
-                                </div>
-                            </div>
-                        </div>
-                        <div id="panel2">
-                            <div class="row">
-                                <div class="col-lg-3">
-                                    <label>Education Qualifications:</label>
-                                </div>
-                                <div class="col-lg-9">
-                                    <select name="education"  class="form-control"  data-index="10">
-                                        <option value="1">Bachelor's Degree</option>
-										<option value="2">Master's Degree</option>
-										<option value="3">Up to ALs</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-lg-3">
-                                    <label>Employment Type:</label>
-                                </div>
-                                <div class="col-lg-9">
-                                    <select name="employment"  class="form-control"  data-index="11">
-                                        <option value="1">Permanent</option>
-										<option value="2">Contract</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-lg-3">
-                                    <label>Expected Salary:</label>
-                                </div>
-                                <div class="col-lg-9">
-                                    <input type="text" placeholder="Enter Expecting Amount" name="salaryAmount" value="" class="form-control" maxlength="15" required="required"  data-index="12">
-                                    <span class="has-error">
-                                        <small data-fv-result="INVALID" id="amountvalid" data-fv-for="message" data-fv-validator="notEmpty" class="help-block" style="display:none">Invalid  amount. Enter without cents.Ex:100000</small>
-                                    </span>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-lg-3">
-                                    <label>Years of Experience:</label>
-                                </div>
-                                <div class="col-lg-9">
-                                    <input type="text" placeholder="Enter Experience in years" name="expPeriod" value="" class="form-control" maxlength="3" required="required"  data-index="13">
-                                    <span class="has-error">
-                                        <small data-fv-result="INVALID" id="periodvalid" data-fv-for="message" data-fv-validator="notEmpty" class="help-block" style="display:none">Invalid . Please enter in years</small>
-                                    </span>
-                                </div>
-                            </div>
+                    <form method="post" enctype="multipart/form-data" class="form-horizontal">
+	<div class="page-header">
+    	<h1 class="h2">Publish a New Advertisement </h1>
+    </div>
+    
+
+	<?php
+	if(isset($errMSG)){
+			?>
+            <div class="alert alert-danger">
+				<strong><?php echo $errMSG; ?></strong>
+            </div>
+            <?php
+	}
+	else if(isset($successMSG)){
+		?>
+        <div class="alert alert-success">
+              <strong> <?php echo $successMSG; ?></strong>
+        </div>
+        <?php
+	}
+	?>   
+	
+		<table class="table table-bordered table-responsive">
+	
+    <tr>
+    	<td><label class="control-label">Company Name</label></td>
+        <td><input class="form-control" type="text" name="companyName" placeholder="Enter Company Name" value="<?php echo $companyName; ?>" /></td>
+    </tr>
+    
+    <tr>
+    	<td><label class="control-label">Job Title</label></td>
+        <td><input class="form-control" type="text" name="vacProfession" placeholder="Enter Profession" value="<?php echo $vacProfession; ?>" /></td>
+    </tr>
+    
+    <tr>
+    	<td><label class="control-label">Advertisement</label></td>
+        <td><input class="input-group" type="file" name="vacPic" accept="image/*" /></td>
+    </tr>
+   
+    
+    </table>
                             <br>
                             <div class="row">
                                 <div class="col-lg-8">
                                 </div>
                                 <div class="col-lg-2">
-                                    <button class="btn btn-primary btn-right" id="panel2_back">Back</button>
+                                    <a class="btn btn-primary" href=""> &nbsp; View All</a>
                                 </div>
                                 <div class="col-lg-2">
-                                    <button class="btn btn-primary btn-right" id="panel2_next" data-index="14">Next</button>
+                                    <button type="submit" name="btnsave" class="btn btn-primary">&nbsp; Publish</button>
                                 </div>
                             </div>
                             <br>
@@ -219,16 +200,16 @@
 			<p class="footer-company-motto">RapidJOBBS, Right people for right jobs.</p>
 
 			<p class="footer-links">
-				<a href="#">Home</a>
-				·
+				<a href="index.php">Home</a>
+				.
 				<a href="#">Jobs</a>
-				·
+				.
 				<a href="#">Profile</a>
-				·
+				.
 				<a href="#">About</a>
-				·
+				.
 				<a href="#">Faq</a>
-				·
+				.
 				<a href="#">Contact</a>
 			</p>
 
